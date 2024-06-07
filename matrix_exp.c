@@ -4,24 +4,27 @@
 #include <limits.h>
 #define SIZE_MAXL 1000000
 Matrix* matrix_power(const Matrix* A, size_t power, Matrix* res) {
+    if (res == NULL) {
+        return NULL;
+    }
     if (A == NULL) {
         return NULL;
     }
     if (power == 0) {
         matrix_free(res);
-        res = matrix_create_unit_square(A->rows);
-        if (res == NULL) {
+        Matrix* result = matrix_create_unit_square(A->rows);
+        if (result == NULL) {
             return NULL;
         }
-        return res;
+        return result;
     }
     else if (power == 1) {
         matrix_free(res);
-        res = matrix_clone(A);
-        if (res == NULL) {
+        Matrix* result = matrix_clone(A);
+        if (result == NULL) {
             return NULL;
         }
-        return res;
+        return result;
     }
     else {
         Matrix* temp1 = matrix_clone(A);
@@ -30,15 +33,15 @@ Matrix* matrix_power(const Matrix* A, size_t power, Matrix* res) {
         }
         for (size_t i = 2; i <= power; i++) {
             matrix_free(res);
-            res = matrix_multiply(temp1, A);
-            if (res == NULL) {
+            Matrix* result = matrix_multiply(temp1, A);
+            if (result == NULL) {
                 matrix_free(temp1);
                 return NULL;
             }
             matrix_free(temp1);
-            temp1 = matrix_clone(res);
-            if (temp1 == NULL) {
-                matrix_free(res);
+            Matrix* temp2 = matrix_clone(result);
+            if (temp2 == NULL) {
+                matrix_free(result);
                 return NULL;
             }
         }
@@ -46,7 +49,6 @@ Matrix* matrix_power(const Matrix* A, size_t power, Matrix* res) {
         return res;
     }
 }
-
 Matrix* matrix_exponential(const Matrix *A, double eps) {
     if (A == NULL) {
         return NULL;
@@ -63,7 +65,7 @@ Matrix* matrix_exponential(const Matrix *A, double eps) {
     double n_factorial = 1;
     double norm_term = 0;
     for (size_t n = 1; n <= SIZE_MAXL; n++) {
-        // Ïðîâåðêà íà ïåðåïîëíåíèå ñ÷åò÷èêà öèêëà
+        // ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð° Ð¿ÐµÑ€ÐµÐ¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ ÑÑ‡ÐµÑ‚Ñ‡Ð¸ÐºÐ° Ñ†Ð¸ÐºÐ»Ð°
         if (n == SIZE_MAXL) {
             matrix_free(result);
             matrix_free(temp);

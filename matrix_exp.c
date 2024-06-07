@@ -24,25 +24,25 @@ Matrix* matrix_power(const Matrix* A, size_t power, Matrix* res) {
         return res;
     }
     else {
-        Matrix* temp = matrix_clone(A);
-        if (temp == NULL) {
+        Matrix* temp1 = matrix_clone(A);
+        if (temp1 == NULL) {
             return NULL;
         }
         for (size_t i = 2; i <= power; i++) {
             matrix_free(res);
-            res = matrix_multiply(temp, A);
+            res = matrix_multiply(temp1, A);
             if (res == NULL) {
-                matrix_free(temp);
+                matrix_free(temp1);
                 return NULL;
             }
-            matrix_free(temp);
-            temp = matrix_clone(res);
-            if (temp == NULL) {
+            matrix_free(temp1);
+            temp1 = matrix_clone(res);
+            if (temp1 == NULL) {
                 matrix_free(res);
                 return NULL;
             }
         }
-        matrix_free(temp);
+        matrix_free(temp1);
         return res;
     }
 }

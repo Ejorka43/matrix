@@ -1,0 +1,43 @@
+# depslib dependency file v1.0
+1717546609 source:c:\users\ejork\onedrive\Рабочий стол\lab23\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<locale.h>
+	<math.h>
+	"struct.h"
+	"operations.h"
+	"gauss.h"
+	"exp.h"
+
+1716561296 c:\users\ejork\onedrive\Рабочий стол\lab23\struct.h
+	<stddef.h>
+
+1716576040 c:\users\ejork\onedrive\Рабочий стол\lab23\operations.h
+	"struct.h"
+
+1716561072 c:\users\ejork\onedrive\Рабочий стол\lab23\gauss.h
+	"operations.h"
+
+1717253361 c:\users\ejork\onedrive\Рабочий стол\lab23\exp.h
+	"operations.h"
+
+1717541515 source:c:\users\ejork\onedrive\Рабочий стол\lab23\matrix_exp.c
+	"exp.h"
+	<stddef.h>
+	<stdint.h>
+	<limits.h>
+
+1717542221 source:c:\users\ejork\onedrive\Рабочий стол\lab23\matrix_gauss.c
+	"gauss.h"
+
+1717536793 source:c:\users\ejork\onedrive\Рабочий стол\lab23\matrix_operations.c
+	<stdlib.h>
+	"operations.h"
+	<math.h>
+
+1717542062 source:c:\users\ejork\onedrive\Рабочий стол\lab23\matrix_struct.c
+	<stdlib.h>
+	<stdio.h>
+	"struct.h"
+

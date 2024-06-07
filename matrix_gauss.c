@@ -27,13 +27,17 @@ Matrix* inverse_matrix(const Matrix* m) {
         permute_string(result, i, row);
 
         double element = matrix_get(temp, i, i);
+        if (element == 0) { // Проверка на деление на 0
+            matrix_free(result);
+            matrix_free(temp);
+            return NULL;
+        }
         multiply_row(temp, 1 / element, i);
         multiply_row(result, 1 / element, i);
 
         for (size_t j = 0; j < temp->rows; ++j) {
             if (j != i) {
                 double scalar = -matrix_get(temp, j, i);
-
                 for (size_t k = 0; k < temp->cols; ++k) {
                     matrix_set(temp, j, k, matrix_get(temp, j, k) + scalar * matrix_get(temp, i, k));
                     matrix_set(result, j, k, matrix_get(result, j, k) + scalar * matrix_get(result, i, k));
@@ -54,6 +58,10 @@ Matrix* solve_system(const Matrix* A, const Matrix* B, Matrix* x) {
         return NULL;
     }
     x = matrix_multiply(A_inv, B);
+    if (x == NULL) {
+        matrix_free(A_inv);
+        return NULL;
+    }
     matrix_free(A_inv);
     return x;
 }

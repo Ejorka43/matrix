@@ -2,16 +2,17 @@
 #include <stdio.h>
 #include "struct.h"
 Matrix* matrix_alloc(size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) {
+        return NULL;
+    }
     Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
     if (matrix == NULL) {
-        //Не удалось выделить память
         return NULL;
     }
     matrix->rows = rows;
     matrix->cols = cols;
-    matrix->data = (double*) malloc(rows * cols * sizeof(double));
+    matrix->data = (double*) calloc(rows * cols, sizeof(double));
     if (matrix->data == NULL) {
-        //Не удалось выделить память
         free(matrix);
         return NULL;
     }
@@ -19,14 +20,18 @@ Matrix* matrix_alloc(size_t rows, size_t cols) {
 }
 
 void matrix_free(Matrix* matrix) {
-    free(matrix->data);
-    free(matrix);
+    if (matrix != NULL) {
+        free(matrix->data);
+        free(matrix);
+    }
 }
 
 Matrix* matrix_clone(const Matrix* m) {
+    if (m == NULL) {
+        return NULL;
+    }
     Matrix* clone = matrix_alloc(m->rows, m->cols);
     if (clone == NULL) {
-        //Не удалось выделить память
         return NULL;
     }
     for (size_t i = 0; i < m->rows; i++) {
@@ -37,7 +42,11 @@ Matrix* matrix_clone(const Matrix* m) {
     return clone;
 }
 
+
 Matrix* matrix_resize(Matrix* m, size_t rows, size_t cols) {
+    if (m == NULL || rows == 0 || cols == 0) {
+        return NULL;
+    }
     free(m->data);
     m->data = (double*) malloc(rows * cols * sizeof(double));
     if (m->data == NULL) {
@@ -49,23 +58,32 @@ Matrix* matrix_resize(Matrix* m, size_t rows, size_t cols) {
 }
 
 void matrix_set(Matrix* matrix, size_t row, size_t col, double value) {
+    if (matrix == NULL || row >= matrix->rows || col >= matrix->cols) {
+        return; // Выход, если индексы за пределами матрицы
+    }
     size_t index = row * matrix->cols + col;
     matrix->data[index] = value;
 }
 
 double matrix_get(const Matrix* matrix, size_t row, size_t col) {
+    if (matrix == NULL || row >= matrix->rows || col >= matrix->cols) {
+        return 0.0; // Возвращаем 0, если индексы за пределами матрицы
+    }
     size_t index = row * matrix->cols + col;
     return matrix->data[index];
 }
 
 double *matrix_get_elem(const Matrix* matrix, size_t i, size_t j) {
-    if (i < matrix->rows && j < matrix->cols){
-        return &matrix->data[i * matrix->cols + j];
+    if (matrix == NULL || i >= matrix->rows || j >= matrix->cols){
+        return NULL;
     }
-    return 0;
+    return &matrix->data[i * matrix->cols + j];
 }
 
 void matrix_print(const Matrix* matrix) {
+    if (matrix == NULL) {
+        return;
+    }
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
             printf("%-13lf", matrix_get(matrix, i, j));
@@ -75,6 +93,9 @@ void matrix_print(const Matrix* matrix) {
 }
 
 Matrix* zero_matrix_set(Matrix* matrix) {
+    if (matrix == NULL) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
             matrix->data[i * matrix->cols + j] = 0.0;
@@ -84,7 +105,13 @@ Matrix* zero_matrix_set(Matrix* matrix) {
 }
 
 Matrix* zero_matrix_alloc(size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) {
+        return NULL;
+    }
     Matrix* matrix = matrix_alloc(rows, cols);
+    if (matrix == NULL) {
+        return NULL;
+    }
     zero_matrix_set(matrix);
     return matrix;
 }
@@ -92,7 +119,6 @@ Matrix* zero_matrix_alloc(size_t rows, size_t cols) {
 Matrix* matrix_create_unit_square(size_t size) {
     Matrix* matrix = zero_matrix_alloc(size, size);
     if (matrix == NULL) {
-        //Не удалось выделить память
         return NULL;
     }
     for (size_t i = 0; i < size; i++) {
@@ -103,6 +129,9 @@ Matrix* matrix_create_unit_square(size_t size) {
 }
 
 Matrix* matrix_assign(Matrix* m1, const Matrix* m2) {
+    if (m1 == NULL || m2 == NULL) {
+        return NULL;
+    }
     if (m1->rows != m2->rows || m1->cols != m2->cols) {
         return NULL;
     }

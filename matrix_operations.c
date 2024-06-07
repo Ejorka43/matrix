@@ -3,8 +3,10 @@
 #include <math.h>
 
 Matrix* matrix_add(Matrix* m1, const Matrix* m2) {
+    if (m1 == NULL || m2 == NULL) {
+        return NULL;
+    }
     if (m1->rows != m2->rows || m1->cols != m2->cols) {
-        // Некорректные размеры матриц
         return NULL;
     }
     for (size_t i = 0; i < m1->rows; i++) {
@@ -17,8 +19,10 @@ Matrix* matrix_add(Matrix* m1, const Matrix* m2) {
 }
 
 Matrix* matrix_sum(Matrix* m, const Matrix* m1, const Matrix* m2){
+    if (m == NULL || m1 == NULL || m2 == NULL) {
+        return NULL;
+    }
     if (m1->rows != m2->rows || m1->cols != m2->cols) {
-        // Некорректные размеры матриц
         return NULL;
     }
     for (size_t i = 0; i < m1->rows; i++) {
@@ -31,6 +35,9 @@ Matrix* matrix_sum(Matrix* m, const Matrix* m1, const Matrix* m2){
 }
 
 Matrix* matrix_multiply_scalar(Matrix* matrix, double scalar) {
+    if (matrix == NULL) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
             double multi = matrix_get(matrix, i, j) * scalar;
@@ -41,25 +48,32 @@ Matrix* matrix_multiply_scalar(Matrix* matrix, double scalar) {
 }
 
 Matrix* matrix_multiply(const Matrix* m1, const Matrix* m2) {
+    if (m1 == NULL || m2 == NULL) {
+        return NULL;
+    }
     if (m1->cols != m2->rows) {
         return NULL;
     }
     Matrix* result = matrix_alloc(m1->rows, m2->cols);
+    if (result == NULL) {
+        return NULL;
+    }
     for (size_t i = 0; i < m1->rows; i++) {
         for (size_t j = 0; j < m2->cols; j++) {
-            matrix_set(result, i, j, 0);
-            double multi;
+            double multi = 0;
             for (size_t k = 0; k < m1->cols; k++) {
                 multi +=  matrix_get(m1, i, k) * matrix_get(m2, k, j);
-                matrix_set(result, i, j, multi);
             }
-            multi = 0;
+            matrix_set(result, i, j, multi);
         }
     }
     return result;
 }
 
 Matrix* matrix_transpose_simple(Matrix* matrix) {
+    if (matrix == NULL) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = i + 1; j < matrix->cols; j++) {
              double key1 = matrix_get(matrix, i, j);
@@ -72,16 +86,25 @@ Matrix* matrix_transpose_simple(Matrix* matrix) {
 }
 
 Matrix* matrix_transpose(const Matrix* matrix, Matrix* result) {
+    if (matrix == NULL || result == NULL) {
+        return NULL;
+    }
+    if (matrix->rows != result->cols || matrix->cols != result->rows) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
             double key = matrix_get(matrix, j, i);
-            matrix_set(result, i, j, key);;
+            matrix_set(result, i, j, key);
         }
     }
     return result;
 }
 
 Matrix* multiply_row(Matrix* matrix, double scalar,  size_t row) {
+    if (matrix == NULL || row >= matrix->rows) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->cols; i++) {
         double key = matrix_get(matrix, row, i);
         matrix_set(matrix, row, i, key * scalar);
@@ -89,8 +112,10 @@ Matrix* multiply_row(Matrix* matrix, double scalar,  size_t row) {
     return matrix;
 }
 
-
 Matrix* add_strings(Matrix* matrix, size_t row1, size_t row2) {
+    if (matrix == NULL || row1 >= matrix->rows || row2 >= matrix->rows) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->cols; i++) {
         double key = matrix_get(matrix, row1, i) + matrix_get(matrix, row2, i);
         matrix_set(matrix, row1, i, key);
@@ -99,6 +124,9 @@ Matrix* add_strings(Matrix* matrix, size_t row1, size_t row2) {
 }
 
 Matrix* add_multiply_row_by_scalar(Matrix* m, size_t k, size_t t, double scalar){
+    if (m == NULL || k >= m->rows || t >= m->rows) {
+        return NULL;
+    }
     for (size_t i = 0; i < m->cols; ++i) {
         matrix_set(m, k, i, matrix_get(m, k, i) + scalar * matrix_get(m, t, i));
     }
@@ -106,6 +134,9 @@ Matrix* add_multiply_row_by_scalar(Matrix* m, size_t k, size_t t, double scalar)
 }
 
 Matrix* permute_string(Matrix* matrix, size_t row1, size_t row2) {
+    if (matrix == NULL || row1 >= matrix->rows || row2 >= matrix->rows) {
+        return NULL;
+    }
     for (size_t i = 0; i < matrix->cols; i++) {
         double key1 = matrix_get(matrix, row1, i);
         double key2 = matrix_get(matrix, row2, i);
@@ -116,6 +147,9 @@ Matrix* permute_string(Matrix* matrix, size_t row1, size_t row2) {
 }
 
 double max_row_norm(const Matrix* matrix) {
+    if (matrix == NULL) {
+        return 0;
+    }
     double max = 0.0;
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
@@ -129,6 +163,9 @@ double max_row_norm(const Matrix* matrix) {
 }
 
 double max_col_norm(const Matrix* matrix) {
+    if (matrix == NULL) {
+        return 0;
+    }
     double max = 0.0;
     for (size_t j = 0; j < matrix->cols; j++) {
         for (size_t i = 0; i < matrix->rows; i++) {
@@ -140,9 +177,8 @@ double max_col_norm(const Matrix* matrix) {
     }
     return max;
 }
-
 Matrix* allocate_submatrix(const Matrix* matrix, size_t excluding_row, size_t excluding_col, Matrix* submatrix) {
-    if (excluding_row >= matrix->rows || excluding_col >= matrix->cols) {
+    if (matrix == NULL || submatrix == NULL || excluding_row >= matrix->rows || excluding_col >= matrix->cols) {
         return NULL;
     }
     size_t r = 0, c = 0;
@@ -164,6 +200,9 @@ Matrix* allocate_submatrix(const Matrix* matrix, size_t excluding_row, size_t ex
 }
 
 double matrix_determinant(const Matrix* m) {
+    if (m == NULL) {
+        return 0;
+    }
     if (m->rows != m->cols) {
         return 0;
     }
@@ -179,7 +218,6 @@ double matrix_determinant(const Matrix* m) {
         allocate_submatrix(m, 0, j, sub);
         det += pow(-1, j + 1) * matrix_get(m, 0, j) * matrix_determinant(sub);
     }
-
     matrix_free(sub);
     return det;
 }
